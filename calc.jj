@@ -1,0 +1,111 @@
+//javacc ファイル
+
+options
+{
+  static = false;
+}
+
+PARSER_BEGIN(Parser)
+import java.io.*;
+import java.awt.event.*;
+class Parser {
+	private ActionListener listener;
+	public void setActionListener(ActionListener a){
+		listener = a;
+	}
+	private void outputCalc(Node n){
+		listener.actionPerformed(
+		new ActionEvent(this,
+				ActionEvent.ACTION_PERFORMED,
+				String.valueOf(n.calc())));
+	}
+	private void outputNode(Node n){
+		listener.actionPerformed(
+		new ActionEvent(this,
+				ActionEvent.ACTION_PERFORMED,
+				n.displayNode()));
+	}
+}
+PARSER_END(Parser)
+
+TOKEN : {
+    <NUM : ["0"-"9"](["0"-"9","."])*>
+ |  <PLUSOP : "+" > 
+ |  <MINUSOP : "-" > 
+ |  <MULOP : "*" > 
+ |  <DIVOP : "/" > 
+ |  <OPEN : "(" > 
+ |  <CLOSE : ")" >
+ |  <EQOP : "=" > 
+}
+SKIP : {
+    " " | "\n" | "\r"
+}
+
+public Node start() :
+{
+	Node root;
+}
+{
+	root=sum()
+	<EQOP> {outputCalc(root); return root; }
+}
+
+public Node sum() :
+{
+	Node root, node;
+}
+{
+	root=prod()  
+	( <PLUSOP> node=prod() {
+		root = Op.connectToLeft(root);
+		root.setOp('+');
+		root.addRight(node); 
+		outputNode(root);
+	  }
+	| <MINUSOP> node=prod() {
+                root = Op.connectToLeft(root);
+		root.setOp('-');
+		root.addRight(node);
+		outputNode(root);
+	  }
+	)* {return root; }
+}
+
+private Node prod() :
+{
+	Node node, root;
+}
+{
+	root=atai()
+	( <MULOP> node=atai() {
+		root = Op.connectToLeft(root);
+		root.setOp('*');
+		root.addRight(node);
+		outputNode(root);
+	  }
+	| <DIVOP> node=atai() {
+		root = Op.connectToLeft(root);
+		root.setOp('/');
+		root.addRight(node);
+		outputNode(root);
+	  }
+	)* {return root; }
+}
+
+private Node atai() :
+{ 
+	Node node;
+}
+{
+	node=num() {outputNode(node); return node; }
+	| <OPEN> node=sum() <CLOSE> {return node;}
+}
+
+private Node num() :
+{
+	Token token;
+}
+{
+	token=<NUM> { return new Num(Double.parseDouble(token.image));}
+}

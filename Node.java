@@ -1,8 +1,6 @@
 //計算木を生成するコード
 
 abstract class Node {
-    abstract public void show();
-    abstract public void rpn();
     abstract public void setOp(char c);
     abstract public void addLeft(Node n);
     abstract public void addRight(Node n);
@@ -17,12 +15,6 @@ class Num extends Node {
     @Override public void setOp(char c){}
     @Override public void addLeft(Node n){}
     @Override public void addRight(Node n){}
-    @Override public void show(){
-	System.out.print(value);
-    }
-    @Override public void rpn(){
-	System.out.print(value);
-    }
     @Override public double calc(){return value;}
     @Override public String displayNode(){return String.valueOf(value);}
 }
@@ -44,29 +36,6 @@ class Op extends Node{
     }
     @Override public void addRight(Node n){
 	right = n;
-    }
-    @Override public void show(){
-	System.out.print("(");
-	if(left!=null){
-	    left.show();
-	}
-	System.out.print(op);
-	if(right!=null){
-	    right.show();
-	}
-	System.out.print(")");
-    }
-    @Override public void rpn(){
-	if(left!=null){
-	    left.rpn();
-	}
-	System.out.print(" ");
-	if(right!=null){
-	    right.rpn();
-	}
-	System.out.print(" ");
-	System.out.print(op);
-	System.out.print(" ");
     }
     @Override public double calc(){
 	if (left!=null && right!=null) {

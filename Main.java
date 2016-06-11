@@ -70,8 +70,7 @@ class Main {
 	container.add(label, BorderLayout.NORTH);
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setVisible(true);
-	boolean f = true;
-	while(f){
+	while(true){
 		try{
 	 		Parser parser = new Parser(keyboard);
 			parser.setActionListener(label.getActionListener());
